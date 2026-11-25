@@ -324,37 +324,7 @@
         }
 
 
-        const SECRET_DATE = "21122025"; // Özel tarihiniz (sadece rakamlar)
-
-function checkPassword() {
-  const input = document.getElementById("pass-input");
-  const errorMsg = document.getElementById("error-msg");
-  const lockBox = document.querySelector(".lock-box");
-  
-  // Girilen değerdeki nokta, eğik çizgi ve boşlukları temizle
-  const cleanedValue = input.value.replace(/[^0-9]/g, "");
-
-  if (cleanedValue === SECRET_DATE) {
-    document.getElementById("lock-screen").classList.add("unlocked");
-    
-    // Eğer sayfada müzik varsa burada otomatik başlatabilirsin:
-    // const audio = document.getElementById("bg-music");
-    // if (audio) audio.play();
-    
-    // Daktilo efektini burada tetikleyebilirsin:
-    // startTypewriter();
-  } else {
-    errorMsg.textContent = "Emin misin güzelim, tekrar dene!";
-    lockBox.classList.remove("shake");
-    void lockBox.offsetWidth; // Animasyonu sıfırla
-    lockBox.classList.add("shake");
-  }
-}
-
-// Enter tuşuna basıldığında da çalışsın
-document.getElementById("pass-input").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") checkPassword();
-});
+        
 
         function erase() {
             if (charIdx > 0) {
