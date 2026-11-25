@@ -25,6 +25,80 @@
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="font-size:20px"><text y="18">❤️</text></svg>'), auto;
         }
 
+
+        .lock-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 25, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.lock-overlay.unlocked {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.lock-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 2.2rem;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.lock-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.lock-box h2 { margin: 0 0 0.4rem; font-size: 1.4rem; }
+.lock-box p { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.2rem; }
+
+.lock-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 1.1rem;
+  text-align: center;
+  letter-spacing: 2px;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+.lock-box button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #ff4d6d;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.lock-box button:hover { background: #ff758f; transform: scale(1.02); }
+.error-text { color: #ff8fa3; font-size: 0.85rem; min-height: 1.2em; margin-top: 0.6rem; margin-bottom: 0; }
+
+/* Yanlış şifre titreme animasyonu */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+.shake { animation: shake 0.3s ease-in-out; }
+
         @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -151,6 +225,19 @@
         <p style="font-size: 0.8rem; margin-top: 15px; color: #888;">21 Aralık'tan beri her anımda seninle...</p>
     </div>
 
+
+    <!-- Giriş Kilidi Ekranı -->
+<div id="lock-screen" class="lock-overlay">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h2>Bizi Başlatan Tarih</h2>
+    <p>Devam etmek için o özel günü gir</p>
+    <input type="text" id="pass-input" placeholder="GG.AA.YYYY" maxlength="10" autocomplete="off">
+    <button id="unlock-btn" onclick="checkPassword()">Kilidi Aç</button>
+    <p id="error-msg" class="error-text"></p>
+  </div>
+</div>
+
     <script>
         // Daktilo Efekti
         const texts = ["İyi ki varsın sevgilim ❤️", "Kalbim her saniye senin için çarpıyor bitanem 💘", "Sana her geçen gün daha çok aşık oluyorum sevgilim 🤍", "İyi ki hayatımdasın prensesim 💖"];
@@ -167,6 +254,39 @@
                 setTimeout(erase, 3000);
             }
         }
+
+
+        const SECRET_DATE = "21122025"; // Özel tarihiniz (sadece rakamlar)
+
+function checkPassword() {
+  const input = document.getElementById("pass-input");
+  const errorMsg = document.getElementById("error-msg");
+  const lockBox = document.querySelector(".lock-box");
+  
+  // Girilen değerdeki nokta, eğik çizgi ve boşlukları temizle
+  const cleanedValue = input.value.replace(/[^0-9]/g, "");
+
+  if (cleanedValue === SECRET_DATE) {
+    document.getElementById("lock-screen").classList.add("unlocked");
+    
+    // Eğer sayfada müzik varsa burada otomatik başlatabilirsin:
+    // const audio = document.getElementById("bg-music");
+    // if (audio) audio.play();
+    
+    // Daktilo efektini burada tetikleyebilirsin:
+    // startTypewriter();
+  } else {
+    errorMsg.textContent = "Hatalı tarih, tekrar dene!";
+    lockBox.classList.remove("shake");
+    void lockBox.offsetWidth; // Animasyonu sıfırla
+    lockBox.classList.add("shake");
+  }
+}
+
+// Enter tuşuna basıldığında da çalışsın
+document.getElementById("pass-input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") checkPassword();
+});
 
         function erase() {
             if (charIdx > 0) {
